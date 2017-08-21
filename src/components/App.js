@@ -16,10 +16,9 @@ class App extends Component {
     meal: null,
     day: null,
     food: null,
-    loadingFood: false,
     ingredientsModalOpen: false,
+    loadingFood: false,
   }
-
   openFoodModal = ({ meal, day }) => {
     this.setState(() => ({
       foodModalOpen: true,
@@ -27,7 +26,6 @@ class App extends Component {
       day,
     }))
   }
-
   closeFoodModal = () => {
     this.setState(() => ({
       foodModalOpen: false,
@@ -36,35 +34,6 @@ class App extends Component {
       food: null,
     }))
   }
-
-  openIngredientsModal = () => {
-    console.log("click to open modal")
-    this.setState(() => ({
-      ingrediantsModalOpen: true,
-    }))
-  }
-
-  closeIngredientsModal = () => {
-    this.setState(() => ({
-      ingrediantsModalOpen: false,
-    }))
-  }
-
- generateShoppingList = () => {
-  return this.props.calendar.reduce((result, { meals }) => {
-      const { breakfast, lunch, dinner } = meals
-   
-      breakfast && result.push(breakfast)
-      lunch && result.push(lunch)
-      dinner && result.push(dinner)
-   
-      return result
-    }, [])
-    .reduce((ings, { ingredientLines }) => ings.concat(ingredientLines), [])
-  }
-
-
-
   searchFood = (e) => {
     if (!this.input.value) {
       return
@@ -80,27 +49,37 @@ class App extends Component {
         loadingFood: false,
       })))
   }
+  openIngredientsModal = () => this.setState(() => ({ ingredientsModalOpen: true }))
+  closeIngredientsModal = () => this.setState(() => ({ ingredientsModalOpen: false }))
+  generateShoppingList = () => {
+    return this.props.calendar.reduce((result, { meals }) => {
+      const { breakfast, lunch, dinner } = meals
 
+      breakfast && result.push(breakfast)
+      lunch && result.push(lunch)
+      dinner && result.push(dinner)
 
+      return result
+    }, [])
+    .reduce((ings, { ingredientLines }) => ings.concat(ingredientLines), [])
+  }
   render() {
     const { foodModalOpen, loadingFood, food, ingredientsModalOpen } = this.state
     const { calendar, selectRecipe, remove } = this.props
     const mealOrder = ['breakfast', 'lunch', 'dinner']
 
-    return (
 
+    return (
       <div className='container'>
+
         <div className='nav'>
-          <h1 className='header'>Food is Great</h1>
+          <h1 className='header'>UdaciMeals</h1>
           <button
             className='shopping-list'
             onClick={this.openIngredientsModal}>
-              ShoppingList
+              Shopping List
           </button>
         </div>
-
-
-
 
         <ul className='meal-types'>
           {mealOrder.map((mealType) => (
@@ -176,19 +155,19 @@ class App extends Component {
         <Modal
           className='modal'
           overlayClassName='overlay'
-          isOpen={this.ingredientsModalOpen}
+          isOpen={ingredientsModalOpen}
           onRequestClose={this.closeIngredientsModal}
-          contentLabel='Modal'>
-        {ingredientsModalOpen && 
-            <ShoppingList list={this.generateShoppingList()}/>}
+          contentLabel='Modal'
+        >
+          {ingredientsModalOpen && <ShoppingList list={this.generateShoppingList()}/>}
         </Modal>
+
       </div>
     )
   }
 }
 
 function mapStateToProps ({ food, calendar }) {
-
   const dayOrder = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
 
   return {
